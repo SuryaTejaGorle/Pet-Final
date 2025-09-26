@@ -30,7 +30,6 @@ function App() {
 
   const getDashboardRoute = () => {
     if (!user) return '/';
-    
     switch (user.role) {
       case 'adopter':
         return '/adopter-dashboard';
@@ -43,8 +42,11 @@ function App() {
     }
   };
 
+  // Use REACT_APP_BASE to support deployment under subpaths like /frontend or /repo-name
+  const basePath = process.env.REACT_APP_BASE || '/';
+
   return (
-    <Router>
+    <Router basename={basePath}>
       <div className="App">
         <Navigation user={user} isLoggedIn={isLoggedIn} onLogout={handleLogout} />
         <main className="main-content">
@@ -54,43 +56,43 @@ function App() {
             <Route path="/pet/:id" element={<PetProfile />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-            <Route 
-              path="/login" 
-              element={
-                isLoggedIn ? <Navigate to={getDashboardRoute()} /> : 
-                <Login onLogin={handleLogin} />
-              } 
+            <Route
+              path="/login"
+              element={isLoggedIn ? <Navigate to={getDashboardRoute()} /> : <Login onLogin={handleLogin} />}
             />
-            <Route 
-              path="/signup" 
-              element={
-                isLoggedIn ? <Navigate to={getDashboardRoute()} /> : 
-                <Signup onSignup={handleLogin} />
-              } 
+            <Route
+              path="/signup"
+              element={isLoggedIn ? <Navigate to={getDashboardRoute()} /> : <Signup onSignup={handleLogin} />}
             />
-            <Route 
-              path="/adopter-dashboard" 
+            <Route
+              path="/adopter-dashboard"
               element={
-                isLoggedIn && user?.role === 'adopter' ? 
-                <AdopterDashboard user={user} /> : 
-                <Navigate to="/login" />
-              } 
+                isLoggedIn && user?.role === 'adopter' ? (
+                  <AdopterDashboard user={user} />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
             />
-            <Route 
-              path="/shelter-dashboard" 
+            <Route
+              path="/shelter-dashboard"
               element={
-                isLoggedIn && user?.role === 'shelter' ? 
-                <ShelterDashboard user={user} /> : 
-                <Navigate to="/login" />
-              } 
+                isLoggedIn && user?.role === 'shelter' ? (
+                  <ShelterDashboard user={user} />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
             />
-            <Route 
-              path="/admin-dashboard" 
+            <Route
+              path="/admin-dashboard"
               element={
-                isLoggedIn && user?.role === 'admin' ? 
-                <AdminDashboard user={user} /> : 
-                <Navigate to="/login" />
-              } 
+                isLoggedIn && user?.role === 'admin' ? (
+                  <AdminDashboard user={user} />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
             />
           </Routes>
         </main>
