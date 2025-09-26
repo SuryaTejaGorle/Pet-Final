@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import styles from './Auth.module.css';
 
 function Login({ onLogin }) {
@@ -9,6 +10,7 @@ function Login({ onLogin }) {
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,7 +18,6 @@ function Login({ onLogin }) {
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -46,24 +47,40 @@ function Login({ onLogin }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      // Mock login logic - in real app, validate against backend
-      const mockUser = {
-        id: 1,
-        name: formData.email.split('@')[0],
-        email: formData.email,
-        role: 'adopter' // Default role for demo
+
+    try {
+      // Call backend login API
+      const response = await axios.post('http://localhost:8082/api/auth/login', formData);
+
+      // Extract user info from response
+      const user = {
+        email: response.data.email,
+        name: response.data.name,
+        role: response.data.role.toLowerCase()
       };
-      
-      onLogin(mockUser);
+
+      // Store JWT token & user info in localStorage
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      // Call parent login handler
+      onLogin(user);
+
+      // Redirect to dashboard based on role
+      if (user.role === 'admin') navigate('/admin-dashboard');
+      else if (user.role === 'shelter') navigate('/shelter-dashboard');
+      else navigate('/adopter-dashboard');
+
+    } catch (err) {
+      const message = err.response?.data || 'Login failed';
+      setErrors({ form: message });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -75,6 +92,8 @@ function Login({ onLogin }) {
         </div>
 
         <form onSubmit={handleSubmit} className={styles.authForm}>
+          {errors.form && <p className={styles.errorMessage}>{errors.form}</p>}
+
           <div className="form-group">
             <label htmlFor="email" className="form-label">Email Address</label>
             <input

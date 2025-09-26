@@ -1,35 +1,44 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import styles from './Auth.module.css';
 
-function Signup({ onSignup }) {
+function Signup() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'adopter',
+    role: 'ADOPTER', // Default role in uppercase
     phone: '',
     address: ''
   });
+
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
+  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+
+    // Convert role to uppercase before setting state
+    const newValue = name === 'role' ? value.toUpperCase() : value;
+
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: newValue
     }));
-    // Clear error when user starts typing
+
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         [name]: ''
       }));
     }
   };
 
+  // Validate the form before submission
   const validateForm = () => {
     const newErrors = {};
 
@@ -59,7 +68,7 @@ function Signup({ onSignup }) {
       newErrors.phone = 'Phone number is required';
     }
 
-    if ((formData.role === 'shelter' || formData.role === 'admin') && !formData.address) {
+    if ((formData.role === 'SHELTER' || formData.role === 'ADMIN') && !formData.address) {
       newErrors.address = 'Address is required for shelter/admin accounts';
     }
 
@@ -67,27 +76,34 @@ function Signup({ onSignup }) {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      const newUser = {
-        id: Date.now(),
-        name: formData.name,
-        email: formData.email,
-        role: formData.role,
-        phone: formData.phone,
-        address: formData.address
-      };
-      
-      onSignup(newUser);
+    setSuccessMessage('');
+
+    try {
+      // Send data to backend
+      const response = await axios.post('http://localhost:8082/api/auth/register', formData);
+
+      setSuccessMessage('Account created successfully! You can now login.');
+      setFormData({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        role: 'ADOPTER',
+        phone: '',
+        address: ''
+      });
+    } catch (error) {
+      setErrors({ apiError: error.response?.data || 'Signup failed. Please try again.' });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -99,6 +115,7 @@ function Signup({ onSignup }) {
         </div>
 
         <form onSubmit={handleSubmit} className={styles.authForm}>
+          {/* Full Name */}
           <div className="form-group">
             <label htmlFor="name" className="form-label">Full Name</label>
             <input
@@ -113,6 +130,7 @@ function Signup({ onSignup }) {
             {errors.name && <span className={styles.errorMessage}>{errors.name}</span>}
           </div>
 
+          {/* Email */}
           <div className="form-group">
             <label htmlFor="email" className="form-label">Email Address</label>
             <input
@@ -127,6 +145,7 @@ function Signup({ onSignup }) {
             {errors.email && <span className={styles.errorMessage}>{errors.email}</span>}
           </div>
 
+          {/* Role */}
           <div className="form-group">
             <label htmlFor="role" className="form-label">Account Type</label>
             <select
@@ -136,22 +155,23 @@ function Signup({ onSignup }) {
               onChange={handleChange}
               className="form-select"
             >
-              <option value="adopter">Pet Adopter</option>
-              <option value="shelter">Shelter/Pet Owner</option>
-              <option value="admin">Administrator</option>
+              <option value="ADOPTER">Pet Adopter</option>
+              <option value="SHELTER">Shelter/Pet Owner</option>
+              <option value="ADMIN">Administrator</option>
             </select>
-            {formData.role === 'shelter' && (
+            {formData.role === 'SHELTER' && (
               <small className={styles.roleDescription}>
                 As a shelter, you can list pets for adoption and manage adoption requests.
               </small>
             )}
-            {formData.role === 'admin' && (
+            {formData.role === 'ADMIN' && (
               <small className={styles.roleDescription}>
                 Administrators can manage all users and verify shelter accounts.
               </small>
             )}
           </div>
 
+          {/* Phone */}
           <div className="form-group">
             <label htmlFor="phone" className="form-label">Phone Number</label>
             <input
@@ -166,7 +186,8 @@ function Signup({ onSignup }) {
             {errors.phone && <span className={styles.errorMessage}>{errors.phone}</span>}
           </div>
 
-          {(formData.role === 'shelter' || formData.role === 'admin') && (
+          {/* Address */}
+          {(formData.role === 'SHELTER' || formData.role === 'ADMIN') && (
             <div className="form-group">
               <label htmlFor="address" className="form-label">Address</label>
               <textarea
@@ -182,6 +203,7 @@ function Signup({ onSignup }) {
             </div>
           )}
 
+          {/* Password */}
           <div className="form-group">
             <label htmlFor="password" className="form-label">Password</label>
             <input
@@ -196,6 +218,7 @@ function Signup({ onSignup }) {
             {errors.password && <span className={styles.errorMessage}>{errors.password}</span>}
           </div>
 
+          {/* Confirm Password */}
           <div className="form-group">
             <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
             <input
@@ -210,6 +233,13 @@ function Signup({ onSignup }) {
             {errors.confirmPassword && <span className={styles.errorMessage}>{errors.confirmPassword}</span>}
           </div>
 
+          {/* API error */}
+          {errors.apiError && <p className={styles.errorMessage}>{errors.apiError}</p>}
+
+          {/* Success message */}
+          {successMessage && <p className={styles.successMessage}>{successMessage}</p>}
+
+          {/* Submit button */}
           <button
             type="submit"
             disabled={isLoading}
