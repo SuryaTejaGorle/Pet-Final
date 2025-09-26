@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-  base: '/', // ✅ Serve from root so Nginx finds files
+  base: '/Pet-Final', // ✅ Serve from root so Nginx finds files
   plugins: [react()],
   optimizeDeps: {
     exclude: ['lucide-react'],
