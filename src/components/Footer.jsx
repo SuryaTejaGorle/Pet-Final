@@ -50,7 +50,7 @@ function Footer() {
         </div>
 
         <div className={styles.footerBottom}>
-          <p>&copy; 2025 PetHome. All rights reserved.</p>
+          <p className={styles.copyright}>© 2025 PetHome. All rights reserved.</p>
           <div className={styles.footerBottomLinks}>
             <a href="#">Privacy Policy</a>
             <a href="#">Terms of Service</a>

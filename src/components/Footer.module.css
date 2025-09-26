@@ -1,5 +1,5 @@
 .footer {
-  background-color: var(--neutral-800);
+  background-color:rgba(255, 255, 255, 0.027);
   color: var(--neutral-300);
   margin-top: auto;
 }
@@ -31,7 +31,7 @@
   align-items: center;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--white);
+  color: black;
   text-decoration: none;
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-md);
@@ -42,13 +42,13 @@
 }
 
 .logoDescription {
-  color: var(--neutral-400);
+  color: rgb(35, 30, 30);
   line-height: 1.6;
   margin-bottom: 0;
 }
 
 .footerTitle {
-  color: var(--white);
+  color: black;
   margin-bottom: var(--spacing-md);
   font-size: 1.1rem;
 }
@@ -61,13 +61,14 @@
 }
 
 .footerLinks a {
-  color: var(--neutral-400);
+  color:blueviolet;
   text-decoration: none;
   transition: var(--transition);
 }
 
 .footerLinks a:hover {
-  color: var(--primary-color);
+  color: rgb(213, 27, 14);
+  text-decoration: underline;
 }
 
 .contactInfo {
@@ -78,7 +79,12 @@
 
 .contactInfo p {
   margin-bottom: 0;
-  color: var(--neutral-400);
+  color:rgb(134, 29, 232);
+}
+
+.contactInfo p:hover {
+  color: red;
+  text-decoration: underline;
 }
 
 .socialLinks {
@@ -88,13 +94,15 @@
 }
 
 .socialLink {
-  color: var(--neutral-400);
+  color: blueviolet;
   text-decoration: none;
   transition: var(--transition);
 }
 
 .socialLink:hover {
-  color: var(--primary-color);
+  color:red;
+  text-decoration: underline;
+
 }
 
 .footerBottom {
@@ -106,6 +114,16 @@
   flex-wrap: wrap;
   gap: var(--spacing-md);
 }
+/* Make copyright text black */
+.copyright {
+  color: black;
+}
+
+.copyright:hover {
+  color: red;
+  text-decoration: underline;
+}
+
 
 .footerBottomLinks {
   display: flex;
@@ -113,14 +131,15 @@
 }
 
 .footerBottomLinks a {
-  color: var(--neutral-400);
+  color:rgb(17, 5, 5);
   text-decoration: none;
   font-size: 0.9rem;
   transition: var(--transition);
 }
 
 .footerBottomLinks a:hover {
-  color: var(--primary-color);
+  color:rgb(255, 0, 0);
+  text-decoration: underline;
 }
 
 /* Mobile Styles */

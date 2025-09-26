@@ -48,11 +48,18 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  align-items: center; /* Added to center children horizontally */
 }
 
 .main-content {
   flex: 1;
   padding-top: 80px;
+  width: 1550px;      /* Added to take full width of parent */
+  max-width: 100%; /* Added max width for layout constraint */
+  padding-left: var(--spacing-md); /* Keep some side padding */
+  padding-right: var(--spacing-md);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Typography */
