@@ -15,19 +15,23 @@ import Contact from './pages/Contact';
 import './App.css';
 
 function App() {
+  // State for user and login status
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  // Handle user login
   const handleLogin = (userData) => {
     setUser(userData);
     setIsLoggedIn(true);
   };
 
+  // Handle user logout
   const handleLogout = () => {
     setUser(null);
     setIsLoggedIn(false);
   };
 
+  // Determine which dashboard route to navigate after login
   const getDashboardRoute = () => {
     if (!user) return '/';
     switch (user.role) {
@@ -42,13 +46,16 @@ function App() {
     }
   };
 
-  // Use REACT_APP_BASE to support deployment under subpaths like /frontend or /repo-name
-  const basePath = process.env.REACT_APP_BASE || '/';
+  // Base path for SPA routing (works for Tomcat, GitHub Pages, Docker)
+  const basePath = import.meta.env.VITE_BASE_URL || '/';
 
   return (
     <Router basename={basePath}>
       <div className="App">
+        {/* Navigation bar */}
         <Navigation user={user} isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+
+        {/* Main content */}
         <main className="main-content">
           <Routes>
             <Route path="/" element={<LandingPage />} />
@@ -56,14 +63,24 @@ function App() {
             <Route path="/pet/:id" element={<PetProfile />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+
+            {/* Login route */}
             <Route
               path="/login"
-              element={isLoggedIn ? <Navigate to={getDashboardRoute()} /> : <Login onLogin={handleLogin} />}
+              element={
+                isLoggedIn ? <Navigate to={getDashboardRoute()} /> : <Login onLogin={handleLogin} />
+              }
             />
+
+            {/* Signup route */}
             <Route
               path="/signup"
-              element={isLoggedIn ? <Navigate to={getDashboardRoute()} /> : <Signup onSignup={handleLogin} />}
+              element={
+                isLoggedIn ? <Navigate to={getDashboardRoute()} /> : <Signup onSignup={handleLogin} />
+              }
             />
+
+            {/* Adopter Dashboard */}
             <Route
               path="/adopter-dashboard"
               element={
@@ -74,6 +91,8 @@ function App() {
                 )
               }
             />
+
+            {/* Shelter Dashboard */}
             <Route
               path="/shelter-dashboard"
               element={
@@ -84,6 +103,8 @@ function App() {
                 )
               }
             />
+
+            {/* Admin Dashboard */}
             <Route
               path="/admin-dashboard"
               element={
@@ -96,6 +117,8 @@ function App() {
             />
           </Routes>
         </main>
+
+        {/* Footer */}
         <Footer />
       </div>
     </Router>
